@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="rostopic" type="rostopic" name="arbitrary_name" args="pub -r 10 /firefly/gazebo/command/motor_speed mav_msgs/Actuators '{angular_velocities: [400, 400, 900, 900, 400, 400]}'
+" output="screen"/>
+  <node name="video" pkg="image_view" type="video_recorder" respawn="false" output="screen" cwd="ROS_HOME">
+    <remap from="image" to="/firefly/camera_sensor/camera_na/image_raw"/>
+  </node>
+</launch>

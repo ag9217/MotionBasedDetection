@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="rosbag" type="play" name="rosbag" required="true" args="$(find rotors_gazebo)/bags/traj1/traj1.bag"/>
+  <node name="video" pkg="image_view" type="video_recorder" respawn="false" output="screen" cwd="ROS_HOME">
+    <remap from="image" to="/firefly/camera_sensor/camera_na/image_raw"/>
+  </node>
+</launch>

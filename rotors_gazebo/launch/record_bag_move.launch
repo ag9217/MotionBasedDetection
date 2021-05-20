@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="rostopic" type="rostopic" name="move_drone" output="screen" args="pub -r 10 /firefly/gazebo/command/motor_speed mav_msgs/Actuators '{angular_velocities: [100, 100, 700000, 700000, 100, 100]}'" />
+  <node pkg="rosbag" type="record" name="rosbag" required="true" args="record -a --duration=25s -O traj1.bag -x /firefly/camera_sensor/(.*)"/>
+</launch>
