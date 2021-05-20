@@ -1,0 +1,78 @@
+\documentclass[a4paper]{article}
+
+\begin{document}
+
+\title{OptFlow:\\Matlab-Tools for the computation of optic flow}
+\author{Claudius Strub, Jens Peter Lindemann}
+\maketitle
+
+\section{Overview}
+
+This is a short introduction on how to use the OF-toolbox. This toolbox computes the optic flow an agent (e.g. an animal or a robot) experiences when moving in a given environment on a given trajectory. Here the environment is defined by a set of 3D polygons and the trajectory describes a time series of positions and view orientations of the agent. The toolbox computes image velocities resulting from these definitions at sampling points on a spherical visual sensor.
+
+The toolbox functions are grouped by prefixes into the following groups:
+
+\begin{itemize}
+\item OFCalc... Computation of optic flow data.
+\item OFMod... Creating models.
+\item OFDraw... Visualisation of data.
+\item OFGenerate... Generate sample points, or stats.
+\item OFSubroutine... No need to call these ones. They are used by other Methods.
+
+\end{itemize}
+
+\subsection{You need}
+
+You need three data structures to start
+  \begin{enumerate}
+  \item a list of 3D-coordinates (vertices) and yaw, pitch, roll angels which describe your Trajectory (tra). This is an $Tx6$ matrix. Angles are in radian!\newline
+example: tra=[0 0 0 0 0 0; 0.5 0.5 0 0.15 0 0.2];
+  \item a list of spherical coordinates which describe your SamplePoints (sp). This is generated from OFGenerateSp() (see help for parameter details).
+  \item a model which describes your world. There are a couple of methods starting with OFMod... which can be used to create one.
+  \end{enumerate}
+
+\subsection{Creating a model}
+\subsubsection{example}
+  world = OFModCylinder('object', 2, 4, 10); \newline
+  world = OFModTranslate(world, 4, 2, 0); \newline
+  world = OFModJoin(world, OFModCube('EventHorizon', 10, 10, 10));\newline
+
+\subsubsection{infos}
+The 3D center of all models is in [0 0 0].\newline
+When an model is labelled with 'EventHorizon', it is drawn transparent
+(initially used for a surrounding box). All other labelled models will be drawn half-transparent.
+
+\subsubsection{optional: Visualisation} 
+ 
+ \begin{itemize}
+  \item Models can be plotted with OFDrawPatch().\newline
+example:    OFDrawPatch(world, true);
+\item Or a model and trajectory can be plotted together with OFDrawTra(). \newline
+example:    OFDrawTra(world, tra, 1);
+\end{itemize}
+
+\subsection{compute OpticFlow} 
+\subsubsection{example} 
+[hof, vof]=OFCalcOpticFlow(world, tra, sp);
+
+\subsubsection{infos} 
+To compute the optic flow use OFCalcOpticFlow()
+To get good results, trajectory steps should be as small as possible.
+(Optic flow is computed with the Koenderink equation \cite{koenderink})
+Rotations of more than $pi/4$ between two trajectory steps will lead to inaccurate results. Rotations of more than $pi/2$ will lead to wrong results!
+
+\subsubsection{optional: Visualisation} 
+To get the optic flow at trajectory step 2:
+  \begin{itemize}
+  \item on an 3d sphere: OFDraw3dPlot().\newline
+example:    OFDraw3dPlot(tra, sp, hof, vof, 2);
+ \item in an cylindrical coordinate system: OFDrawCylPlot().\newline
+example:    OFDraw3dPlot(sp, hof, vof, 2);
+\end{itemize}
+In the cylindric coordinate system the optic flow is shifted, so that the sample point [0 0] is in the middle ($pi$) now. So $pi/2$ is left and $3*pi/2$ is right. 0 and $2*pi$ are backwards.
+
+\begin{thebibliography}{References}
+\bibitem{koenderink}J.~J.~Koenderink and Andra J.~van Doorn: Facts on Optic Flow. \textsl{Biological Cybernetics 56(4) pp. 247--254}, 1987
+\end{thebibliography}
+
+\end{document}
